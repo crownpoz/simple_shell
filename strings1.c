@@ -1,109 +1,106 @@
 #include "shell.h"
 
-
 /**
- * _strcmp - compare two strings
- * @s1: string 1
- * @s2: string 2
- * Return: int that tells num spaces in between, 0 if exactly the same string
+ * _strcat - concatenate two strings
+ * @dest: char pointer the dest of the copied str
+ * @src: const char pointer the source of str
+ * Return: the dest
  */
+char *_strcat(char *dest, const char *src)
+{
+	int i;
+	int j;
 
+	for (i = 0; dest[i] != '\0'; i++)
+		;
+
+	for (j = 0; src[j] != '\0'; j++)
+	{
+		dest[i] = src[j];
+		i++;
+	}
+
+	dest[i] = '\0';
+	return (dest);
+}
+/**
+ * *_strcpy - Copies the string pointed to by src.
+ * @dest: Type char pointer the dest of the copied str
+ * @src: Type char pointer the source of str
+ * Return: the dest.
+ */
+char *_strcpy(char *dest, char *src)
+{
+
+	size_t a;
+
+	for (a = 0; src[a] != '\0'; a++)
+	{
+		dest[a] = src[a];
+	}
+	dest[a] = '\0';
+
+	return (dest);
+}
+/**
+ * _strcmp - Function that compares two strings.
+ * @s1: type str compared
+ * @s2: type str compared
+ * Return: Always 0.
+ */
 int _strcmp(char *s1, char *s2)
 {
-	int i = 0;
+	int i;
 
-	while (*(s1 + i) == *(s2 + i) && *(s1 + i))
-		i++;
-
-	if (*(s2 + i))
-		return (*(s1 + i) - *(s2 + i));
-	else
-		return (0);
-}
-
-/**
- * _strncmp - compares two strings and returns their difference
- * @s1: the first string
- * @s2: the second string
- * @bytes: number of bytes to compare
- * Return: number of bytes that differ
- */
-int _strncmp(char *s1, char *s2, size_t bytes)
-{
-	unsigned int i;
-
-	if (s1 == NULL || s2 == NULL)
-		return (-1);
-
-	for (i = 0; s1[i] && s2[i] && s2[i] == s1[i] && i < bytes - 1; i++)
+	for (i = 0; s1[i] == s2[i] && s1[i]; i++)
 		;
-	return (s2[i] - s1[i]);
-}
 
+	if (s1[i] > s2[i])
+		return (1);
+	if (s1[i] < s2[i])
+		return (-1);
+	return (0);
+}
 /**
- * _strcat - a function that concatenates two strings.
- * @dest: an input string
- * @src: an input string
- * Return: A pointer to the resulting string
+ * _strchr - locates a character in a string,
+ * @s: string.
+ * @c: character.
+ * Return: the pointer to the first occurrence of the character c.
  */
-
-char *_strcat(char *dest, char *src)
+char *_strchr(char *s, char c)
 {
-	int i = 0, j = 0;
+	unsigned int i = 0;
 
-	while (dest[i++])
-		j++;
-
-	for (i = 0; src[i]; i++)
-		dest[j++] = src[i];
-
-	return (dest);
+	for (; *(s + i) != '\0'; i++)
+		if (*(s + i) == c)
+			return (s + i);
+	if (*(s + i) == c)
+		return (s + i);
+	return ('\0');
 }
-
 /**
-  * _strdup - duplicates a string
-  * @src: source to copy from
-  * Return: pointer to malloc'd space
-  **/
-char *_strdup(char *src)
-{
-	int len, i;
-	char *dest;
-
-	if (src == NULL)
-		return (NULL);
-	len = _strlen(src);
-	if (len < 0)
-		return (NULL);
-	len++;
-	dest = malloc((len) * sizeof(char));
-	if (dest == NULL)
-		return (NULL);
-	for (i = 0; i < len; i++)
-		dest[i] = src[i];
-	dest[i - 1] = '\0';
-	return (dest);
-}
-
-/**
- * _atoi - converts a string to an integer
- * @s: the input string
- * Return: the converted int
+ * _strspn - gets the length of a prefix substring.
+ * @s: initial segment.
+ * @accept: accepted bytes.
+ * Return: the number of accepted bytes.
  */
-int _atoi(char *s)
+int _strspn(char *s, char *accept)
 {
-	int n, sign, result;
+	int i, j, bool;
 
-	for (n = result = 0, sign = 1; s[n]; n++)
+	for (i = 0; *(s + i) != '\0'; i++)
 	{
-		if (s[n] == '-')
-			sign *= -1;
-		if (s[n] >= '0' && s[n] <= '9')
-			result = 10 * result - (s[n] - '0');
-		if (result < 0 && (s[n] < '0' || s[n] > '9'))
+		bool = 1;
+		for (j = 0; *(accept + j) != '\0'; j++)
+		{
+			if (*(s + i) == *(accept + j))
+			{
+				bool = 0;
+				break;
+			}
+		}
+		if (bool == 1)
 			break;
 	}
-	if (sign > 0)
-		result *= -1;
-	return (result);
+	return (i);
 }

@@ -1,50 +1,73 @@
 #include "shell.h"
 
 /**
- * main - main entry point of the program
- * Return: 0 if successful
-*/
-
-int main(void)
+ * free_data - frees data structure
+ *
+ * @datash: data structure
+ * Return: no return
+ */
+void free_data(data_shell *datash)
 {
-	char *buffer;
-	list_t *linkedlist_path;
-	int characters;
-	char **commands;
-	size_t bufsize = BUFSIZE;
+	unsigned int i;
 
-	buffer = (char *)malloc(bufsize * sizeof(char));
-
-	if (buffer == NULL)
+	for (i = 0; datash->_environ[i]; i++)
 	{
-		perror("Unable to allocate buffer");
-		exit(1);
+		free(datash->_environ[i]);
 	}
 
-	linkedlist_path = path_list();
+	free(datash->_environ);
+	free(datash->pid);
+}
 
-	do {
-		write(STDOUT_FILENO, "~$ ", 3);
-		characters = getline(&buffer, &bufsize, stdin);
+/**
+ * set_data - Initialize data structure
+ *
+ * @datash: data structure
+ * @av: argument vector
+ * Return: no return
+ */
+void set_data(data_shell *datash, char **av)
+{
+	unsigned int i;
 
-		commands = split_line(buffer);
-		if (!commands)
-			break;
+	datash->av = av;
+	datash->input = NULL;
+	datash->args = NULL;
+	datash->status = 0;
+	datash->counter = 1;
 
-		if (_builtin(commands[0]))
-			_builtin(commands[0])(commands, linkedlist_path, buffer);
-		else
-			execute(commands, linkedlist_path);
+	for (i = 0; environ[i]; i++)
+		;
 
-		free(commands);
+	datash->_environ = malloc(sizeof(char *) * (i + 1));
 
-		if (characters == EOF)
-		{
-			free(buffer);
-			continue;
-		}
+	for (i = 0; environ[i]; i++)
+	{
+		datash->_environ[i] = _strdup(environ[i]);
+	}
 
-	} while (1);
+	datash->_environ[i] = NULL;
+	datash->pid = aux_itoa(getpid());
+}
 
-	return (0);
+/**
+ * main - Entry point
+ *
+ * @ac: argument count
+ * @av: argument vector
+ *
+ * Return: 0 on success.
+ */
+int main(int ac, char **av)
+{
+	data_shell datash;
+	(void) ac;
+
+	signal(SIGINT, get_sigint);
+	set_data(&datash, av);
+	shell_loop(&datash);
+	free_data(&datash);
+	if (datash.status < 0)
+		return (255);
+	return (datash.status);
 }
