@@ -1,11 +1,14 @@
 #include "shell.h"
 
 /**
- * get_sigint - Handle the crtl + c call in prompt
- * @sig: Signal handler
+ *handle_signal- it keeps track is interactive mode
+ *@m: the signal number
+ *Return: nothing
  */
-void get_sigint(int sig)
+
+void handle_signal(int m)
 {
-	(void)sig;
-	write(STDOUT_FILENO, "\n^-^ ", 5);
+	(void)m;
+	write(STDERR_FILENO, "\n", 1);
+	write(STDERR_FILENO, "$ ", 2);
 }
